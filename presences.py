@@ -15,7 +15,7 @@ NA_FILL = "NA"
 PAS_PRISE = "-"
 CERTIFICAT = "C"
 
-uploaded_files = st.file_uploader("Choose a file", accept_multiple_files=True)
+uploaded_files = st.file_uploader("Glissez-déposez un ou plusieurs fichier(s) de présences de ePerso", accept_multiple_files=True)
 
 if uploaded_files:
     dataframes, actas = [], {"id": [], "name": [], "group": []}
