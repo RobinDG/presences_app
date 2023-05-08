@@ -47,7 +47,7 @@ if uploaded_files:
             st.dataframe(df_actas, use_container_width=True)
 
     st.header(f"Présences pour : {df_actas['id'][0]} - {df_actas['name'][0]}".replace("_", " ", -1))
-    st.subheader(f"Groupes : {', '.join(df_actas['group'])}")
+    st.subheader(f"Groupes : {', '.join(sorted(df_actas['group']))}")
 
     legende = {"Symbole":[PRESENT, ABSENT, CERTIFICAT, PAS_PRISE, NA_FILL], "Signification": ["présent","absent","certificat", "présence pas prise", "pas de séance pour cet étudiant à cette date"]}
     st.markdown("**Légende**")
