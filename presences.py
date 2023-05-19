@@ -14,6 +14,7 @@ ABSENT = "ABS"
 NA_FILL = "NA"
 PAS_PRISE = "-"
 CERTIFICAT = "C"
+JUSTIF_DENIED = "R"
 
 uploaded_files = st.file_uploader("Glissez-déposez un ou plusieurs fichier(s) de présences de ePerso", accept_multiple_files=True)
 
@@ -37,7 +38,6 @@ if uploaded_files:
             ).assign(Groupe=acta_group)
         )
 
-
     dataframe = pd.concat(dataframes, ignore_index=True)
     df_actas = pd.DataFrame(actas)
     
@@ -49,7 +49,10 @@ if uploaded_files:
     st.header(f"Présences pour : {df_actas['id'][0]} - {df_actas['name'][0]}".replace("_", " ", -1))
     st.subheader(f"Groupes : {', '.join(sorted(df_actas['group']))}")
 
-    legende = {"Symbole":[PRESENT, ABSENT, CERTIFICAT, PAS_PRISE, NA_FILL], "Signification": ["présent","absent","certificat", "présence pas prise", "pas de séance pour cet étudiant à cette date"]}
+    legende = {
+        "Symbole": [PRESENT, ABSENT, CERTIFICAT, PAS_PRISE, NA_FILL, JUSTIF_DENIED], 
+        "Signification": ["présent","absent","certificat", "présence pas prise", "pas de séance pour cet étudiant à cette date", "justification refusée par le secrétariat"]
+        }
     st.markdown("**Légende**")
     st.table(pd.DataFrame(legende).set_index('Symbole').rename_axis('Symbole'))
 
@@ -64,7 +67,7 @@ if uploaded_files:
     cols_order = ["Matricule", "Nom", "Prénom", "Groupe", "Jour", "Heure", "Présence", "Statut"]
 
     dataframe.drop_duplicates(subset=["Matricule", "Jour"], inplace=True)
-    dataframe["Présence"] = dataframe["Présence"].replace({"1": PRESENT, "0": ABSENT, "c": CERTIFICAT})
+    dataframe["Présence"] = dataframe["Présence"].replace({"1": PRESENT, "0": ABSENT, "c": CERTIFICAT, "R": JUSTIF_DENIED})
 
     with st.expander("Afficher toutes les présences"):
         df = (
@@ -92,8 +95,6 @@ if uploaded_files:
 
     if student:    
         st.write(f'Votre choix : {student}')
-        # perc = dataframe["Présence"].value_counts(normalize=True)["1"] * 100
-        # st.metric("Pourcentage de présence", f"{round(perc, 2)} %", )
         col1, col2 = st.columns(2)
         filter_name = (dataframe["Nom complet"] == student)
         filter_present = dataframe["Présence"].isin([PRESENT, CERTIFICAT, PAS_PRISE])
